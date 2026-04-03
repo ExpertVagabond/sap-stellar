@@ -257,10 +257,26 @@ section{padding:4.5rem 0}
 .cc-label{font-size:.6rem;text-transform:uppercase;letter-spacing:.08em;color:var(--dim);margin-bottom:.4rem}
 .contract-card a{font-size:.68rem;word-break:break-all;line-height:1.5}
 
+/* ── PAYMENTS BADGE ── */
+.payments-section{background:var(--s1);border:1px solid var(--border);border-radius:var(--radius);padding:2rem;margin-bottom:4rem;animation:fadeIn .6s ease .5s both}
+.payments-header{display:flex;align-items:center;gap:1rem;margin-bottom:1.25rem;flex-wrap:wrap}
+.payments-header h3{font-size:.95rem;font-weight:800;color:var(--text)}
+.pay-badge{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:6px;font-size:.68rem;font-weight:700;border:1px solid rgba(226,168,50,0.25);background:var(--accent-dim);color:var(--accent)}
+.pay-badge .check{color:#22c55e}
+.payments-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+@media(max-width:600px){.payments-grid{grid-template-columns:1fr}}
+.pay-proto{background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:1.25rem}
+.pay-proto h4{font-size:.78rem;font-weight:700;color:var(--accent);margin-bottom:.5rem}
+.pay-proto p{font-size:.72rem;color:var(--dim);line-height:1.5;margin-bottom:.5rem}
+.pay-proto code{background:var(--bg);padding:2px 6px;border-radius:3px;font-size:.68rem;color:var(--accent)}
+.pay-discover{font-size:.68rem;color:var(--dim);margin-top:.35rem}
+.pay-discover a{font-size:.68rem}
+
 /* ── FOOTER ── */
 footer{padding:3.5rem 0;text-align:center;color:var(--dim);font-size:.7rem;border-top:1px solid var(--border)}
 footer a{color:var(--accent)}
 .footer-sep{margin:0 .75rem;opacity:.2}
+.footer-hackathon{display:block;margin-top:.75rem;font-size:.62rem;color:var(--dim);letter-spacing:.04em}
 </style>
 </head>
 <body>
@@ -276,7 +292,7 @@ footer a{color:var(--accent)}
   <div class="hero-glow"></div>
   <div class="live-badge"><div class="live-dot"></div> Live on Stellar Testnet</div>
   <h1>Stellar<br><em>Agent Protocol</em></h1>
-  <p class="tagline">AI agents that discover, negotiate, pay, and build reputation autonomously — powered by Soroban smart contracts and x402 micropayments.</p>
+  <p class="tagline">AI agents that discover, negotiate, pay, and build reputation autonomously — powered by Soroban smart contracts with <strong style="color:var(--accent)">x402 + MPP</strong> dual-protocol micropayments.</p>
   <div class="hero-btns">
     <a href="https://github.com/ExpertVagabond/sap-stellar" class="btn btn-glow">GitHub</a>
     <a href="#agents" class="btn btn-ghost">Meet the Agents</a>
@@ -291,6 +307,27 @@ footer a{color:var(--accent)}
   <div class="stat-cell"><div class="stat-val">${data.orderCount}</div><div class="stat-lbl">Work Orders</div></div>
   <div class="stat-cell"><div class="stat-val sm">~5s finality</div><div class="stat-lbl">Settlement</div></div>
   <div class="stat-cell"><div class="stat-val sm">$0.00001</div><div class="stat-lbl">Per Transaction</div></div>
+</div>
+
+<!-- PAYMENTS BADGE -->
+<div class="payments-section">
+  <div class="payments-header">
+    <h3>Payment Protocols</h3>
+    <span class="pay-badge"><span class="check">&#10003;</span> x402 Supported</span>
+    <span class="pay-badge"><span class="check">&#10003;</span> MPP Supported</span>
+  </div>
+  <div class="payments-grid">
+    <div class="pay-proto">
+      <h4>x402 — HTTP 402 Micropayments</h4>
+      <p>Agents pay per-request via <code>402 Payment Required</code>. Soroban auth entries signed client-side, settled on Stellar in ~5s.</p>
+      <div class="pay-discover">Discovery: <a href="/.well-known/x402"><code>/.well-known/x402</code></a></div>
+    </div>
+    <div class="pay-proto">
+      <h4>MPP — Managed Payment Protocol</h4>
+      <p>Stripe-backed credential flow via <code>WWW-Authenticate: Payment</code>. Facilitator handles settlement and receipt issuance.</p>
+      <div class="pay-discover">Discovery: <a href="/.well-known/mpp"><code>/.well-known/mpp</code></a></div>
+    </div>
+  </div>
 </div>
 
 <!-- HOW IT WORKS -->
@@ -369,6 +406,7 @@ footer a{color:var(--accent)}
   <a href="https://dorahacks.io/hackathon/stellar-agents-x402-stripe-mpp/detail">Stellar Hacks</a>
   <span class="footer-sep">|</span>
   Built by <a href="https://purplesquirrelmedia.io">Purple Squirrel Media</a>
+  <span class="footer-hackathon">Built for Stellar Agents x402 Stripe MPP Hackathon &mdash; DoraHacks 2026</span>
 </footer>
 
 <script>
