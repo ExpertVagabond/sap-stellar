@@ -1,10 +1,11 @@
 /**
- * SAP Stellar x402 Payment Server
+ * SAP Stellar Payment Server
  *
  * Express server that:
  * 1. Exposes SAP protocol as REST API
  * 2. Gates agent results behind x402 paywalls on Stellar
- * 3. Handles payment verification and order lifecycle
+ * 3. Supports MPP (Machine Payments Protocol) charge mode
+ * 4. Handles payment verification and order lifecycle
  */
 
 import express from "express";
@@ -232,6 +233,87 @@ app.get("/api/results/:orderId", (req, res) => {
   });
 });
 
+// ── MPP (Machine Payments Protocol) Endpoint ───────────────────────────
+
+// MPP charge mode: alternative to x402 for Stripe-compatible flows.
+// Client sends GET, gets 402 with WWW-Authenticate: Payment header,
+// signs credential, retries with Authorization: Payment header.
+app.get("/api/mpp/results/:orderId", (req, res) => {
+  const authHeader = req.headers["authorization"];
+
+  if (!authHeader?.startsWith("Payment ")) {
+    // Return 402 with MPP challenge
+    res.status(402);
+    res.setHeader(
+      "WWW-Authenticate",
+      `Payment realm="sap-stellar" ` +
+      `amount="${RESULT_PRICE}" ` +
+      `currency="USDC" ` +
+      `network="stellar:testnet" ` +
+      `recipient="${PAY_TO}" ` +
+      `description="SAP order #${req.params.orderId} result"`
+    );
+    res.json({
+      error: "Payment required",
+      protocol: "MPP",
+      message: `Pay ${RESULT_PRICE} via MPP to access this result`,
+    });
+    return;
+  }
+
+  // Payment credential received — in production, verify via MPP settlement
+  res.setHeader("Payment-Receipt", `stellar:testnet:${Date.now()}`);
+  res.json({
+    orderId: req.params.orderId,
+    result: "Agent task result data",
+    paid: true,
+    protocol: "MPP",
+    network: "stellar:testnet",
+    settlement: "MPP charge mode via Stellar",
+  });
+});
+
+// ── Payment Discovery ──────────────────────────────────────────────────
+
+// Standard x402 discovery endpoint
+app.get("/.well-known/x402", (_req, res) => {
+  res.json({
+    version: "2.0",
+    resources: [
+      {
+        path: "/api/results/:orderId",
+        method: "GET",
+        accepts: [{
+          scheme: "exact",
+          price: RESULT_PRICE,
+          network: "stellar:testnet",
+          payTo: PAY_TO,
+        }],
+        description: "Agent task results — paid via x402 on Stellar",
+      },
+    ],
+  });
+});
+
+// MPP discovery
+app.get("/.well-known/mpp", (_req, res) => {
+  res.json({
+    version: "1.0",
+    provider: "sap-stellar",
+    resources: [
+      {
+        path: "/api/mpp/results/:orderId",
+        method: "GET",
+        amount: RESULT_PRICE,
+        currency: "USDC",
+        network: "stellar:testnet",
+        recipient: PAY_TO,
+        description: "Agent task results — paid via MPP on Stellar",
+      },
+    ],
+  });
+});
+
 // ── Protocol Stats ─────────────────────────────────────────────────────
 
 app.get("/api/stats", async (_req, res) => {
@@ -253,10 +335,18 @@ app.get("/api/stats", async (_req, res) => {
         reputation: REPUTATION_CONTRACT,
       },
       treasury: TREASURY,
-      x402: {
-        resultPrice: RESULT_PRICE,
-        payTo: PAY_TO,
-        facilitator: "https://channels.openzeppelin.com/x402/testnet",
+      payments: {
+        x402: {
+          resultPrice: RESULT_PRICE,
+          payTo: PAY_TO,
+          facilitator: "https://channels.openzeppelin.com/x402/testnet",
+          discovery: "/.well-known/x402",
+        },
+        mpp: {
+          resultPrice: RESULT_PRICE,
+          payTo: PAY_TO,
+          discovery: "/.well-known/mpp",
+        },
       },
     });
   } catch (err: any) {

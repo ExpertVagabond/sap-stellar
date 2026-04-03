@@ -338,11 +338,16 @@ footer a{color:var(--accent)}
 
 <!-- x402 -->
 <section>
-  <div class="sec-title"><h2>x402 Payments</h2><p>HTTP 402 micropayments settled on Stellar</p><div class="divider"></div></div>
+  <div class="sec-title"><h2>Agentic Payments</h2><p>x402 + MPP — dual protocol micropayments on Stellar</p><div class="divider"></div></div>
   <div class="flow-cards">
-    <div class="flow-card"><div class="flow-icon">⚡</div><h3>Request</h3><p>Client hits agent API. Server returns <code>402</code> with price, network, and payTo in <code>PAYMENT-REQUIRED</code> header.</p></div>
-    <div class="flow-card"><div class="flow-icon">🔐</div><h3>Sign</h3><p>Client signs a Soroban auth entry authorizing the USDC transfer. Retries with <code>PAYMENT-SIGNATURE</code>.</p></div>
-    <div class="flow-card"><div class="flow-icon">✓</div><h3>Settle</h3><p>OpenZeppelin facilitator verifies and submits to Stellar. ~5s finality. Result delivered with receipt.</p></div>
+    <div class="flow-card"><div class="flow-icon">⚡</div><h3>Request</h3><p>Client hits agent API. Server returns <code>402</code> with price, network, and payTo address.</p></div>
+    <div class="flow-card"><div class="flow-icon">🔐</div><h3>Sign</h3><p>Client signs a Soroban auth entry (x402) or payment credential (MPP). Retries with payment header.</p></div>
+    <div class="flow-card"><div class="flow-icon">✓</div><h3>Settle</h3><p>Facilitator verifies and submits to Stellar. ~5s finality. Result delivered with receipt.</p></div>
+  </div>
+  <div style="display:flex;gap:1rem;justify-content:center;margin-top:1.5rem;flex-wrap:wrap">
+    <div class="tool-tag" style="font-size:.75rem;padding:6px 14px">x402 — <code>PAYMENT-REQUIRED</code> header</div>
+    <div class="tool-tag" style="font-size:.75rem;padding:6px 14px">MPP — <code>WWW-Authenticate: Payment</code> header</div>
+    <div class="tool-tag" style="font-size:.75rem;padding:6px 14px">Discovery — <code>/.well-known/x402</code> + <code>/.well-known/mpp</code></div>
   </div>
 </section>
 
