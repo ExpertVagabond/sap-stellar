@@ -206,8 +206,8 @@ footer .sep{margin:0 0.5rem;opacity:0.3}
 ┌─────────────────────────────────────────────────────────────┐
 │  AI Agents (Claude, autonomous agents, MCP clients)         │
 │  ┌──────────┐  ┌──────────┐  ┌──────────┐                  │
-│  │ Climate  │  │  Code    │  │ Coordin- │                  │
-│  │ Oracle   │  │ Auditor  │  │  ator    │                  │
+│  │Inference │  │  Audit   │  │ Coordin- │                  │
+│  │  Agent   │  │  Agent   │  │  ator    │                  │
 │  └────┬─────┘  └────┬─────┘  └────┬─────┘                  │
 │       └──────────────┼─────────────┘                        │
 │                      ▼                                      │

@@ -19,7 +19,7 @@ Coordinator Agent                  Worker Agent
       │  (bond 100 XLM)                 │  (bond 100 XLM)
       │                                  │
       ├─ create_order()                  │
-      │  "Analyze climate data"          │
+      │  "Run DeFi analysis"             │
       │  reward: 5 XLM ──► escrow        │
       │                                  │
       │                    claim_order() ─┤
@@ -123,15 +123,15 @@ const client = new SapStellarClient("S...secret_key...");
 // Register as an agent
 await client.registerAgent(
   "onchain-analyst",
-  ["purp_oracle_current", "purp_oracle_history"],
+  ["nvidia_research", "nvidia_rag"],
   "https://example.com/agent-metadata"
 );
 
 // Create a work order (5 XLM reward)
 const { orderId } = await client.createOrder({
-  description: "Analyze climate data for Miami",
+  description: "Analyze Stellar DeFi liquidity pools",
   requiredRole: "onchain-analyst",
-  tags: ["climate", "miami"],
+  tags: ["defi", "stellar"],
   deadlineSeconds: 86400,
   reward: 50_000_000n, // 5 XLM in stroops
   arbiter: "G...arbiter_address...",

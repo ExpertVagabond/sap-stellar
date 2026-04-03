@@ -3,14 +3,11 @@
  * SAP-on-Stellar Demo Runner
  *
  * Demonstrates the full agent coordination lifecycle on Stellar testnet:
- *   1. Register 3 agents (Climate Oracle, Code Auditor, Coordinator)
- *   2. Coordinator posts a climate analysis order
- *   3. Climate Oracle claims, executes, submits result
+ *   1. Register 3 agents (Inference Agent, Auditor, Coordinator)
+ *   2. Coordinator posts an inference analysis order
+ *   3. Inference Agent claims, executes, submits result
  *   4. Coordinator approves (XLM flows via SAC, 2.5% to treasury)
- *   5. Coordinator posts a security audit order
- *   6. Code Auditor claims, executes, submits result
- *   7. Coordinator approves
- *   8. Print final state: agents, reputation, treasury balance
+ *   5. Print final state: agents, reputation, treasury balance
  */
 
 import { Keypair } from "@stellar/stellar-sdk";
@@ -92,7 +89,7 @@ async function main() {
   const coordinatorKp = Keypair.random();
 
   console.log("Agent addresses:");
-  console.log(`  Oracle:      ${oracleKp.publicKey()}`);
+  console.log(`  Inference:   ${oracleKp.publicKey()}`);
   console.log(`  Auditor:     ${auditorKp.publicKey()}`);
   console.log(`  Coordinator: ${coordinatorKp.publicKey()}`);
   console.log("");
@@ -111,27 +108,27 @@ async function main() {
   const coordinator = makeClients(coordinatorKp);
 
   // Step 2: Register agents
-  console.log("\n[2/8] Registering Climate Oracle Agent...");
+  console.log("\n[2/8] Registering Inference Agent...");
   const regOracle = await oracle.registry.register_agent({
     authority: oracle.publicKey,
     role: "onchain-analyst",
-    tools: ["purp_oracle_current", "purp_oracle_history", "purp_oracle_index"],
+    tools: ["nvidia_research", "nvidia_rag", "nvidia_multimodal"],
     coldstar_vault: undefined,
-    metadata_uri: "https://sap-stellar.pages.dev/agents/climate-oracle",
+    metadata_uri: "https://sap-stellar-dashboard.purplesquirrelnetworks.workers.dev",
   });
   const regOracleResult = await regOracle.signAndSend();
-  log("2/8", `Climate Oracle registered (tx: ${txId(regOracleResult)})`);
+  log("2/8", `Inference Agent registered (tx: ${txId(regOracleResult)})`);
 
-  console.log("[3/8] Registering Code Auditor Agent...");
+  console.log("[3/8] Registering Auditor Agent...");
   const regAuditor = await auditor.registry.register_agent({
     authority: auditor.publicKey,
     role: "smart-contract-auditor",
     tools: ["sap_get_agent", "sap_list_orders"],
     coldstar_vault: undefined,
-    metadata_uri: "https://sap-stellar.pages.dev/agents/code-auditor",
+    metadata_uri: "https://sap-stellar-dashboard.purplesquirrelnetworks.workers.dev",
   });
   const regAuditorResult = await regAuditor.signAndSend();
-  log("3/8", `Code Auditor registered (tx: ${txId(regAuditorResult)})`);
+  log("3/8", `Auditor Agent registered (tx: ${txId(regAuditorResult)})`);
 
   console.log("[4/8] Registering Coordinator Agent...");
   const regCoord = await coordinator.registry.register_agent({
@@ -139,19 +136,19 @@ async function main() {
     role: "protocol-engineer",
     tools: ["sap_post_order", "sap_approve_result", "sap_list_orders"],
     coldstar_vault: undefined,
-    metadata_uri: "https://sap-stellar.pages.dev/agents/coordinator",
+    metadata_uri: "https://sap-stellar-dashboard.purplesquirrelnetworks.workers.dev",
   });
   const regCoordResult = await regCoord.signAndSend();
   log("4/8", `Coordinator registered (tx: ${txId(regCoordResult)})`);
 
-  // Step 3: Coordinator posts climate analysis order
-  console.log("\n[5/8] Coordinator posts 'Analyze climate data for Miami' order...");
+  // Step 3: Coordinator posts an inference order
+  console.log("\n[5/8] Coordinator posts 'Run inference analysis' order...");
   const now = Math.floor(Date.now() / 1000);
   const createTx = await coordinator.workOrder.create_order({
     requester: coordinator.publicKey,
-    description: "Analyze climate data for Miami — temperature, humidity, AQI from PURP Oracle",
+    description: "Analyze Stellar DeFi liquidity pools — TVL, yield, risk scoring via NIM inference",
     required_role: "onchain-analyst",
-    tags: ["climate", "miami", "purp"],
+    tags: ["defi", "inference", "stellar"],
     deadline: BigInt(now + 86400) as any,
     reward: BigInt(50_000_000) as any, // 5 XLM
     arbiter: coordinator.publicKey,
@@ -160,8 +157,8 @@ async function main() {
   const orderId1 = Number(unwrap(createResult.result));
   log("5/8", `Order #${orderId1} created — 5 XLM reward (tx: ${txId(createResult)})`);
 
-  // Step 4: Climate Oracle claims + executes + submits
-  console.log("\n[6/8] Climate Oracle claims, executes, and submits...");
+  // Step 4: Inference Agent claims + executes + submits
+  console.log("\n[6/8] Inference Agent claims, executes, and submits...");
 
   const claimTx = await oracle.workOrder.claim_order({
     agent_authority: oracle.publicKey,
@@ -170,18 +167,18 @@ async function main() {
   const claimResult = await claimTx.signAndSend();
   log("6/8", `Claimed (tx: ${txId(claimResult)})`);
 
-  // Simulate agent work: generate climate report
-  const climateReport = JSON.stringify({
-    city: "Miami",
-    temperature: "29°C",
-    humidity: "78%",
-    aqi: 42,
-    source: "PURP Oracle (25 data sources)",
+  // Simulate agent work: generate inference report
+  const inferenceReport = JSON.stringify({
+    protocol: "Stellar DeFi",
+    pools_analyzed: 12,
+    total_tvl: "$48.2M",
+    top_pool: { name: "XLM/USDC", tvl: "$18.4M", apy: "4.2%", risk: "low" },
+    model: "NIM inference (nvidia_research)",
     timestamp: new Date().toISOString(),
-    analysis: "Air quality good. Temperature above seasonal average by 2°C.",
+    analysis: "Stellar DeFi TVL growing 12% MoM. XLM/USDC pool offers best risk-adjusted yield.",
   });
 
-  const hash = createHash("sha256").update(climateReport).digest();
+  const hash = createHash("sha256").update(inferenceReport).digest();
   const submitTx = await oracle.workOrder.submit_result({
     agent_authority: oracle.publicKey,
     order_id: BigInt(orderId1) as any,
@@ -191,7 +188,7 @@ async function main() {
   log("6/8", `Result submitted — hash: ${hash.toString("hex").slice(0, 16)}... (tx: ${txId(submitResult)})`);
 
   // Step 5: Coordinator approves
-  console.log("\n[7/8] Coordinator approves — XLM flows to oracle agent...");
+  console.log("\n[7/8] Coordinator approves — XLM flows to inference agent...");
   const approveTx = await coordinator.workOrder.approve_result({
     requester: coordinator.publicKey,
     order_id: BigInt(orderId1) as any,
@@ -219,10 +216,10 @@ async function main() {
   console.log("");
   console.log("  Agent Scores:");
   console.log(
-    `    Climate Oracle:  ${oracleAgent.reputation_score}/10000 (${oracleAgent.tasks_completed} completed, earned ${oracleAgent.total_earned} stroops)`
+    `    Inference Agent: ${oracleAgent.reputation_score}/10000 (${oracleAgent.tasks_completed} completed, earned ${oracleAgent.total_earned} stroops)`
   );
   console.log(
-    `    Code Auditor:    ${auditorAgent.reputation_score}/10000 (${auditorAgent.tasks_completed} completed)`
+    `    Auditor Agent:   ${auditorAgent.reputation_score}/10000 (${auditorAgent.tasks_completed} completed)`
   );
   console.log(
     `    Coordinator:     ${coordAgent.reputation_score}/10000 (${coordAgent.tasks_completed} completed)`

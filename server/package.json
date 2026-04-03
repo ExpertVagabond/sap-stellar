@@ -10,11 +10,14 @@
   },
   "dependencies": {
     "@stellar/stellar-sdk": "^13.1.0",
+    "@x402/core": "^2.9.0",
+    "@x402/express": "^2.9.0",
+    "@x402/stellar": "^2.9.0",
     "cors": "^2.8.5",
     "express": "^4.21.0",
     "sap-registry": "file:../sdk/generated/registry",
-    "sap-work-order": "file:../sdk/generated/work-order",
-    "sap-reputation": "file:../sdk/generated/reputation"
+    "sap-reputation": "file:../sdk/generated/reputation",
+    "sap-work-order": "file:../sdk/generated/work-order"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",

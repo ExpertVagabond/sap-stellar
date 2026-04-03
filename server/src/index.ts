@@ -14,6 +14,9 @@ import { basicNodeSigner } from "@stellar/stellar-sdk/contract";
 import { Client as RegistryClient } from "sap-registry";
 import { Client as WorkOrderClient } from "sap-work-order";
 import { Client as ReputationClient } from "sap-reputation";
+import { paymentMiddleware, x402ResourceServer } from "@x402/express";
+import { ExactStellarScheme } from "@x402/stellar/exact/server";
+import { HTTPFacilitatorClient } from "@x402/core/server";
 
 const PORT = parseInt(process.env.PORT ?? "3402", 10);
 const SECRET_KEY = process.env.STELLAR_SECRET_KEY ?? "";
@@ -37,8 +40,11 @@ const TREASURY =
 // ── x402 Paywall Config ────────────────────────────────────────────────
 
 const RESULT_PRICE = process.env.RESULT_PRICE ?? "$0.01";
-const PAY_TO =
-  process.env.PAY_TO ?? TREASURY;
+const PAY_TO = process.env.PAY_TO ?? TREASURY;
+const FACILITATOR_URL =
+  process.env.FACILITATOR_URL ??
+  "https://channels.openzeppelin.com/x402/testnet";
+const FACILITATOR_API_KEY = process.env.FACILITATOR_API_KEY ?? "";
 
 // ── Setup Clients ──────────────────────────────────────────────────────
 
@@ -178,19 +184,27 @@ app.get("/api/reputation/:addr", async (req, res) => {
 
 // ── x402 Paywall Endpoint ──────────────────────────────────────────────
 
-// Agent results are gated behind x402 micropayments on Stellar.
-// GET /api/results/:orderId
-//   - Without payment: returns 402 with PAYMENT-REQUIRED header
-//   - With valid payment: returns the result data
-app.get("/api/results/:orderId", (req, res) => {
-  const paymentSig = req.headers["payment-signature"];
+// Build x402 facilitator client + resource server
+const facilitatorClient = new HTTPFacilitatorClient({
+  url: FACILITATOR_URL,
+  createAuthHeaders: FACILITATOR_API_KEY
+    ? async () => {
+        const h = { Authorization: `Bearer ${FACILITATOR_API_KEY}` };
+        return { verify: h, settle: h, supported: h };
+      }
+    : undefined,
+});
 
-  if (!paymentSig) {
-    // Return 402 with x402 payment requirements
-    res.status(402);
-    res.setHeader(
-      "PAYMENT-REQUIRED",
-      JSON.stringify({
+const x402Server = new x402ResourceServer(facilitatorClient).register(
+  "stellar:testnet",
+  new ExactStellarScheme()
+);
+
+// Gate agent results behind real x402 micropayments on Stellar
+app.use(
+  paymentMiddleware(
+    {
+      "GET /api/results/:orderId": {
         accepts: [
           {
             scheme: "exact",
@@ -199,26 +213,22 @@ app.get("/api/results/:orderId", (req, res) => {
             payTo: PAY_TO,
           },
         ],
-        description: `SAP order #${req.params.orderId} result`,
+        description: "Agent task result — paid via x402 on Stellar",
         mimeType: "application/json",
-      })
-    );
-    res.json({
-      error: "Payment required",
-      message: `Pay ${RESULT_PRICE} via x402 to access this result`,
-      orderId: req.params.orderId,
-    });
-    return;
-  }
+      },
+    },
+    x402Server
+  )
+);
 
-  // Payment received — serve the result
-  // In production, verify the payment signature via the facilitator
+// This only executes after x402 payment is verified + settled
+app.get("/api/results/:orderId", (req, res) => {
   res.json({
     orderId: req.params.orderId,
     result: "Agent task result data",
     paid: true,
-    paymentSignature: paymentSig,
     network: "stellar:testnet",
+    settlement: "x402 via OpenZeppelin facilitator",
   });
 });
 
