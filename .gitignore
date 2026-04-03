@@ -1,0 +1,9 @@
+target/
+node_modules/
+.soroban/
+*.wasm
+!contracts/**/src/*.wasm
+.env
+.env.*
+dist/
+*.tgz
