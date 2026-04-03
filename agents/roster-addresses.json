@@ -1,0 +1,62 @@
+[
+  {
+    "name": "Nexus",
+    "role": "protocol-engineer",
+    "address": "GB7H2HE7MHGPDXNGQF3PDF5ORWS2RIVD3UD7S6L5OZBEOKXZVF5GFV7A"
+  },
+  {
+    "name": "Cipher",
+    "role": "onchain-analyst",
+    "address": "GD7I2BAFSH3RPGZKH2BHPRI7RVNU3RTSBZBU5ZQDYGBFDRZKMUTN42TQ"
+  },
+  {
+    "name": "Veil",
+    "role": "smart-contract-auditor",
+    "address": "GBWT54IRXEYNIZBMY4AF2XBJRHAAQEALRDYSCOVAEORBZ4UEK4MT6P4N"
+  },
+  {
+    "name": "Glitch",
+    "role": "rpc-infra-engineer",
+    "address": "GC6LSP5LGNELSMW6PUDXVFXHBSH6MJIVKBQ2WOLBTIP3HMPFS5EN5IHW"
+  },
+  {
+    "name": "Bastion",
+    "role": "network-engineer",
+    "address": "GDJO66XK3O6O6MQYSUGQSCEJW3INLPDQGJHFQEMC2YHLRH6MYZRTXJKU"
+  },
+  {
+    "name": "Luna",
+    "role": "indexer-engineer",
+    "address": "GB4D2WEJS6UH6L7TRP3RCJOSVWVHCEFHRCA364IPNSIQHBGGN4CDF4CQ"
+  },
+  {
+    "name": "Archon",
+    "role": "governance-analyst",
+    "address": "GD4ZOFQJLZOTQIY6CR7XLJGMDVDKELEURPJM2SZ2X6WTF2H2BMRZ4QDZ"
+  },
+  {
+    "name": "Katana",
+    "role": "security-scanner",
+    "address": "GDB3EX3JOVBHUYP6SUWLYEMT3MUCN4FCEES4LCYNOOVNVKCVQTEYGG7C"
+  },
+  {
+    "name": "Helix",
+    "role": "tokenomics-designer",
+    "address": "GCXN3654QN4MMGX7CEHPCWCU2XCQ7VAXM66BPKT5MHZYNUHRNWDUV2W7"
+  },
+  {
+    "name": "Dash",
+    "role": "full-stack-degen",
+    "address": "GB36IF2OXV7WAI3GT3YHDYBFU7BXWV5GGYDODEUAUZP6U3LSPQJPQ6AN"
+  },
+  {
+    "name": "Sterling",
+    "role": "payments-infra",
+    "address": "GAFALFPXMZUGDZ4ZFSKCXJUABP44LSANS5EBBD3BL4VBDKJ7KM3DXQW6"
+  },
+  {
+    "name": "Bolt",
+    "role": "crypto-engineer",
+    "address": "GDXNPQPOD3BVUBU7POV335P5PSWMGRGFGABYOTYVRP5JT3TCG3FAUM37"
+  }
+]

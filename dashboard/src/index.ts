@@ -77,10 +77,12 @@ function renderSite(data: {
     const repPct = Math.round(Number(a.reputation_score ?? 0) / 100);
     const img = AGENT_IMAGES[a.role] ?? DEFAULT_IMAGE;
     const earned = (Number(a.total_earned ?? 0) / 10_000_000).toFixed(2);
+    const charName = a.name ?? ROSTER.find(r => r.role === formatRole(a.role ?? ""))?.name ?? formatRole(a.role ?? "unknown");
     return `
     <div class="agent-card">
       <div class="agent-img-wrap"><img src="${img}" alt="${esc(a.role)}" class="agent-img" loading="lazy"></div>
       <div class="agent-info">
+        <div class="agent-char-name">${esc(charName)}</div>
         <div class="agent-role-name">${esc(formatRole(a.role ?? "unknown"))}</div>
         <div class="agent-addr">${trunc(a.address)}</div>
         <div class="agent-rep-row">
@@ -189,14 +191,17 @@ section{padding:4.5rem 0}
 .roster-desc{font-size:.7rem;color:var(--dim);padding:.35rem 1rem 1rem;line-height:1.45}
 
 /* ── AGENTS ── */
-.agents-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:1.25rem}
+.agents-row{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+@media(max-width:900px){.agents-row{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:500px){.agents-row{grid-template-columns:1fr}}
 .agent-card{display:flex;gap:1rem;background:var(--s1);border:1px solid var(--border);border-radius:var(--radius);padding:1rem;position:relative;transition:all .3s;overflow:hidden}
 .agent-card::before{content:"";position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--accent),transparent);opacity:0;transition:opacity .3s}
 .agent-card:hover{border-color:rgba(226,168,50,0.3);transform:translateY(-2px)}.agent-card:hover::before{opacity:1}
 .agent-img-wrap{width:80px;height:100px;border-radius:10px;overflow:hidden;flex-shrink:0;border:1px solid var(--border)}
 .agent-img{width:100%;height:100%;object-fit:cover;object-position:top}
 .agent-info{flex:1;min-width:0}
-.agent-role-name{font-size:.9rem;font-weight:700;color:var(--text);margin-bottom:2px}
+.agent-char-name{font-size:1rem;font-weight:900;color:var(--accent);margin-bottom:1px}
+.agent-role-name{font-size:.7rem;font-weight:600;color:var(--dim);text-transform:uppercase;letter-spacing:.06em;margin-bottom:2px}
 .agent-addr{font-size:.65rem;color:var(--dim);margin-bottom:.6rem}
 .agent-rep-row{display:flex;align-items:center;gap:.5rem;margin-bottom:.5rem}
 .rep-bar{flex:1;height:4px;background:var(--s2);border-radius:2px;overflow:hidden}
@@ -462,22 +467,38 @@ async function getOrders(env: Env) {
   return orders;
 }
 
-async function getAgents(env: Env, orders?: any[]) {
+// Known roster addresses (registered on testnet)
+const KNOWN_AGENTS = [
+  { name: "Nexus", address: "GB7H2HE7MHGPDXNGQF3PDF5ORWS2RIVD3UD7S6L5OZBEOKXZVF5GFV7A" },
+  { name: "Cipher", address: "GD7I2BAFSH3RPGZKH2BHPRI7RVNU3RTSBZBU5ZQDYGBFDRZKMUTN42TQ" },
+  { name: "Veil", address: "GBWT54IRXEYNIZBMY4AF2XBJRHAAQEALRDYSCOVAEORBZ4UEK4MT6P4N" },
+  { name: "Glitch", address: "GC6LSP5LGNELSMW6PUDXVFXHBSH6MJIVKBQ2WOLBTIP3HMPFS5EN5IHW" },
+  { name: "Bastion", address: "GDJO66XK3O6O6MQYSUGQSCEJW3INLPDQGJHFQEMC2YHLRH6MYZRTXJKU" },
+  { name: "Luna", address: "GB4D2WEJS6UH6L7TRP3RCJOSVWVHCEFHRCA364IPNSIQHBGGN4CDF4CQ" },
+  { name: "Archon", address: "GD4ZOFQJLZOTQIY6CR7XLJGMDVDKELEURPJM2SZ2X6WTF2H2BMRZ4QDZ" },
+  { name: "Katana", address: "GDB3EX3JOVBHUYP6SUWLYEMT3MUCN4FCEES4LCYNOOVNVKCVQTEYGG7C" },
+  { name: "Helix", address: "GCXN3654QN4MMGX7CEHPCWCU2XCQ7VAXM66BPKT5MHZYNUHRNWDUV2W7" },
+  { name: "Dash", address: "GB36IF2OXV7WAI3GT3YHDYBFU7BXWV5GGYDODEUAUZP6U3LSPQJPQ6AN" },
+  { name: "Sterling", address: "GAFALFPXMZUGDZ4ZFSKCXJUABP44LSANS5EBBD3BL4VBDKJ7KM3DXQW6" },
+  { name: "Bolt", address: "GDXNPQPOD3BVUBU7POV335P5PSWMGRGFGABYOTYVRP5JT3TCG3FAUM37" },
+];
+
+async function getAgents(env: Env, _orders?: any[]) {
   const { Address } = await import("@stellar/stellar-sdk");
-  if (!orders) orders = await getOrders(env);
-  const addrs = new Set<string>();
-  for (const o of orders) {
-    if (o.requester) addrs.add(String(o.requester));
-    if (o.assigned_agent) addrs.add(String(o.assigned_agent));
-  }
   const agents: any[] = [];
-  let n = 0;
-  for (const addr of addrs) {
-    if (n >= 5) break;
-    try {
-      const a = await callContract(env, env.REGISTRY_CONTRACT, "get_agent", [new Address(addr).toScVal()]);
-      if (a) { agents.push(sanitize({ address: addr, ...a })); n++; }
-    } catch {}
+  // Fetch all 12 known agents in parallel batches of 4
+  for (let batch = 0; batch < KNOWN_AGENTS.length; batch += 4) {
+    const slice = KNOWN_AGENTS.slice(batch, batch + 4);
+    const results = await Promise.allSettled(
+      slice.map(async (ka) => {
+        const a = await callContract(env, env.REGISTRY_CONTRACT, "get_agent", [new Address(ka.address).toScVal()]);
+        if (a) return sanitize({ address: ka.address, name: ka.name, ...a });
+        return null;
+      })
+    );
+    for (const r of results) {
+      if (r.status === "fulfilled" && r.value) agents.push(r.value);
+    }
   }
   return agents;
 }
