@@ -20,12 +20,39 @@ const STATUS_DOTS: Record<number, string> = {
   4: "#ef4444", 5: "#6b7280", 6: "#8b5cf6",
 };
 
+const IMG_BASE = "https://raw.githubusercontent.com/ExpertVagabond/sap-stellar/main/public/agents";
+
 const AGENT_IMAGES: Record<string, string> = {
-  "protocol-engineer": "https://raw.githubusercontent.com/ExpertVagabond/sap-stellar/main/public/agents/coordinator.png",
-  "onchain-analyst": "https://raw.githubusercontent.com/ExpertVagabond/sap-stellar/main/public/agents/inference.png",
-  "smart-contract-auditor": "https://raw.githubusercontent.com/ExpertVagabond/sap-stellar/main/public/agents/auditor.png",
+  "protocol-engineer": `${IMG_BASE}/coordinator.png`,
+  "onchain-analyst": `${IMG_BASE}/inference.png`,
+  "smart-contract-auditor": `${IMG_BASE}/auditor.png`,
+  "rpc-infra-engineer": `${IMG_BASE}/hacker.png`,
+  "network-engineer": `${IMG_BASE}/sentinel.png`,
+  "indexer-engineer": `${IMG_BASE}/oracle.png`,
+  "governance-analyst": `${IMG_BASE}/sage.png`,
+  "security-scanner": `${IMG_BASE}/blade.png`,
+  "tokenomics-designer": `${IMG_BASE}/researcher.png`,
+  "full-stack-degen": `${IMG_BASE}/runner.png`,
+  "payments-infra": `${IMG_BASE}/executive.png`,
+  "crypto-engineer": `${IMG_BASE}/mechbot.png`,
 };
-const DEFAULT_IMAGE = "https://raw.githubusercontent.com/ExpertVagabond/sap-stellar/main/public/agents/inference.png";
+const DEFAULT_IMAGE = `${IMG_BASE}/inference.png`;
+
+// Full roster for the character gallery (always shown)
+const ROSTER = [
+  { name: "Nexus", role: "Protocol Engineer", desc: "Coordinates multi-agent workflows and approves task deliveries.", img: "coordinator" },
+  { name: "Cipher", role: "Onchain Analyst", desc: "Runs inference on DeFi data, liquidity pools, and market signals.", img: "inference" },
+  { name: "Veil", role: "Smart Contract Auditor", desc: "Scans Soroban contracts for vulnerabilities and logic errors.", img: "auditor" },
+  { name: "Glitch", role: "RPC Infra Engineer", desc: "Maintains node infrastructure and monitors network health.", img: "hacker" },
+  { name: "Bastion", role: "Network Sentinel", desc: "Guards protocol perimeters and validates transaction integrity.", img: "sentinel" },
+  { name: "Luna", role: "Indexer Engineer", desc: "Indexes on-chain events and serves queryable data feeds.", img: "oracle" },
+  { name: "Archon", role: "Governance Analyst", desc: "Evaluates proposals, models voting outcomes, advises DAOs.", img: "sage" },
+  { name: "Katana", role: "Security Scanner", desc: "Penetration testing, exploit detection, real-time threat response.", img: "blade" },
+  { name: "Helix", role: "Tokenomics Designer", desc: "Models token supply, emission curves, and incentive structures.", img: "researcher" },
+  { name: "Dash", role: "Full Stack Degen", desc: "Speed-builds frontends, bots, and integrations under pressure.", img: "runner" },
+  { name: "Sterling", role: "Payments Infra", desc: "Architects cross-border payment flows and settlement rails.", img: "executive" },
+  { name: "Bolt", role: "Crypto Engineer", desc: "Builds signing infrastructure, key management, and wallets.", img: "mechbot" },
+];
 
 function sanitize(obj: any): any {
   if (obj === null || obj === undefined) return obj;
@@ -147,6 +174,20 @@ section{padding:4.5rem 0}
 .sec-title p{color:var(--dim);font-size:.82rem}
 .divider{width:40px;height:2px;background:var(--accent);margin:0 auto;opacity:.4;margin-top:.75rem}
 
+/* ── ROSTER ── */
+.roster-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem}
+@media(max-width:900px){.roster-grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:600px){.roster-grid{grid-template-columns:repeat(2,1fr)}}
+.roster-card{background:var(--s1);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;transition:all .3s;position:relative}
+.roster-card::before{content:"";position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--accent),transparent);opacity:0;transition:opacity .3s}
+.roster-card:hover{border-color:rgba(226,168,50,0.35);transform:translateY(-4px);box-shadow:0 8px 30px rgba(226,168,50,0.1)}.roster-card:hover::before{opacity:1}
+.roster-img-wrap{width:100%;aspect-ratio:1;overflow:hidden;background:var(--s2)}
+.roster-img{width:100%;height:100%;object-fit:cover;object-position:top center;transition:transform .4s}
+.roster-card:hover .roster-img{transform:scale(1.05)}
+.roster-name{font-size:.95rem;font-weight:800;padding:.75rem 1rem 0;color:var(--text)}
+.roster-role{font-size:.65rem;text-transform:uppercase;letter-spacing:.08em;color:var(--accent);padding:2px 1rem;font-weight:600}
+.roster-desc{font-size:.7rem;color:var(--dim);padding:.35rem 1rem 1rem;line-height:1.45}
+
 /* ── AGENTS ── */
 .agents-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:1.25rem}
 .agent-card{display:flex;gap:1rem;background:var(--s1);border:1px solid var(--border);border-radius:var(--radius);padding:1rem;position:relative;transition:all .3s;overflow:hidden}
@@ -258,9 +299,23 @@ footer a{color:var(--accent)}
   </div>
 </section>
 
-<!-- AGENTS -->
+<!-- AGENT ROSTER -->
 <section id="agents">
-  <div class="sec-title"><h2>Agents</h2><p>Registered on the Stellar Agent Protocol</p><div class="divider"></div></div>
+  <div class="sec-title"><h2>Agent Roster</h2><p>12 specialized AI agents ready for coordination</p><div class="divider"></div></div>
+  <div class="roster-grid">
+    ${ROSTER.map(r => `
+    <div class="roster-card">
+      <div class="roster-img-wrap"><img src="${IMG_BASE}/${r.img}.png" alt="${esc(r.name)}" class="roster-img" loading="lazy"></div>
+      <div class="roster-name">${esc(r.name)}</div>
+      <div class="roster-role">${esc(r.role)}</div>
+      <div class="roster-desc">${esc(r.desc)}</div>
+    </div>`).join("")}
+  </div>
+</section>
+
+<!-- LIVE AGENTS -->
+<section>
+  <div class="sec-title"><h2>Live on Testnet</h2><p>Agents currently registered on-chain</p><div class="divider"></div></div>
   ${data.agents.length > 0
     ? `<div class="agents-row">${agentsHtml}</div>`
     : '<div class="empty-state">No agents yet — run the demo to populate testnet</div>'
