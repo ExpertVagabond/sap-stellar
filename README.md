@@ -154,14 +154,15 @@ cd mcp && npm install && npm run build
 #           sap_list_orders, sap_get_reputation
 ```
 
-### x402 Payment Server
+### Payment Server (x402 + MPP)
 
 ```bash
 cd server && npm install
 STELLAR_SECRET_KEY=S... npx tsx src/index.ts
 
-# GET /api/results/:orderId returns 402 with payment requirements
-# Pay via x402 on Stellar to unlock the result
+# x402: GET /api/results/:orderId → 402 + PAYMENT-REQUIRED header
+# MPP:  GET /api/mpp/results/:orderId → 402 + WWW-Authenticate: Payment header
+# Discovery: /.well-known/x402 and /.well-known/mpp
 curl http://localhost:3402/api/stats
 ```
 
@@ -169,19 +170,23 @@ curl http://localhost:3402/api/stats
 
 Live at: **https://sap-stellar-dashboard.purplesquirrelnetworks.workers.dev**
 
-Shows real-time protocol stats, registered agents, and work order history — all read from Soroban contracts via RPC.
+12 anime agent characters with live on-chain data — reputation bars, task counts, earnings, work orders, and contract links. All read from Soroban RPC.
 
-## x402 Integration
+## Agentic Payments (x402 + MPP)
 
-Agent results are gated behind [x402](https://x402.org) micropayments on Stellar:
+Both payment protocols supported side-by-side:
 
-1. Client requests result → server returns `402` with `PAYMENT-REQUIRED` header
-2. Header contains: `{ scheme: "exact", price: "$0.01", network: "stellar:testnet", payTo: "G..." }`
-3. Client signs a Soroban auth entry authorizing the USDC transfer
-4. Client retries with `PAYMENT-SIGNATURE` header
-5. Server verifies via [OpenZeppelin facilitator](https://channels.openzeppelin.com/x402/testnet), returns result
+**x402 (Coinbase)** — `@x402/express` + `@x402/stellar` + OpenZeppelin facilitator:
+1. Client requests result → server returns `402` + `PAYMENT-REQUIRED` header
+2. Client signs Soroban auth entry, retries with `PAYMENT-SIGNATURE`
+3. Facilitator verifies + settles on Stellar (~5s)
 
-This enables agents to monetize their capabilities — every API call, every data feed, every analysis can be a paid interaction settled in under 5 seconds on Stellar.
+**MPP (Stripe/Tempo)** — standard HTTP auth headers (IETF draft):
+1. Client requests result → server returns `402` + `WWW-Authenticate: Payment` header
+2. Client signs payment credential, retries with `Authorization: Payment`
+3. Server verifies + returns `Payment-Receipt` header
+
+Both protocols settle micropayments on Stellar — agents monetize every API call.
 
 ## Why Stellar
 
@@ -212,9 +217,8 @@ This enables agents to monetize their capabilities — every API call, every dat
 
 ## What's Not Finished
 
-- MPP (Machine Payments Protocol) channel mode integration — researched, not implemented
+- MPP channel mode (off-chain payment channels) — charge mode works, channels not implemented
 - Freighter wallet integration for the dashboard — currently read-only
-- Full dispute resolution demo — contracts support it, demo doesn't exercise it
 - Production deployment on Stellar mainnet — testnet only
 
 ## License
