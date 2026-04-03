@@ -1,0 +1,26 @@
+{
+  "name": "sap-stellar-server",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "tsx src/index.ts"
+  },
+  "dependencies": {
+    "@stellar/stellar-sdk": "^13.1.0",
+    "cors": "^2.8.5",
+    "express": "^4.21.0",
+    "sap-registry": "file:../sdk/generated/registry",
+    "sap-work-order": "file:../sdk/generated/work-order",
+    "sap-reputation": "file:../sdk/generated/reputation"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.10.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0"
+  }
+}
