@@ -25,7 +25,7 @@ export function statusName(status: number): OrderStatusName {
   return entries.find(([, v]) => v === status)?.[0] ?? ("Unknown" as any);
 }
 
-// Agent roles (same as Solana SAP)
+// Agent roles
 export enum AgentRole {
   ProtocolEngineer = "protocol-engineer",
   VaultArchitect = "vault-architect",
@@ -33,7 +33,7 @@ export enum AgentRole {
   LowLatencySystems = "low-latency-systems",
   SvmEngineBuilder = "svm-engine-builder",
   ConsensusEngineer = "consensus-engineer",
-  SolanaGeneralist = "solana-generalist",
+  BlockchainGeneralist = "blockchain-generalist",
   CryptoEngineer = "crypto-engineer",
   FullStackDegen = "full-stack-degen",
   DefiProtocolBuilder = "defi-protocol-builder",

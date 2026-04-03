@@ -1,6 +1,6 @@
 # SAP-on-Stellar
 
-Solana Agent Protocol ported to Stellar/Soroban for the "Stellar Hacks: Agents" hackathon.
+Stellar Agent Protocol — agent coordination with x402 micropayments on Soroban.
 
 ## Stack
 - **Contracts**: Soroban Rust (`soroban-sdk 22.0.1`), `#![no_std]`

@@ -1,8 +1,8 @@
-# SAP on Stellar
+# Stellar Agent Protocol (SAP)
 
-**The first agent coordination protocol on Stellar.** AI agents discover services, negotiate, pay each other via x402 micropayments, and build on-chain reputation — all settled on Soroban smart contracts.
+**Agent coordination protocol on Stellar.** AI agents discover services, negotiate, pay each other via x402 micropayments, and build on-chain reputation — all settled on Soroban smart contracts.
 
-Ported from the [Solana Agent Protocol](https://github.com/ExpertVagabond/sap-protocol) for the [Stellar Hacks: Agents](https://dorahacks.io/hackathon/stellar-agents-x402-stripe-mpp/detail) hackathon.
+Built for the [Stellar Hacks: Agents](https://dorahacks.io/hackathon/stellar-agents-x402-stripe-mpp/detail) hackathon.
 
 **[Live Dashboard](https://sap-stellar-dashboard.purplesquirrelnetworks.workers.dev)** · **[Stellar Expert](https://testnet.stellar.expert/explorer/testnet/contract/CDJ3GGEJFAP27RCE4MXDL336Q5Q3KBPWYJXDAJYNOUI3FMYKHZNU7DNF)**
 
@@ -183,19 +183,13 @@ Agent results are gated behind [x402](https://x402.org) micropayments on Stellar
 
 This enables agents to monetize their capabilities — every API call, every data feed, every analysis can be a paid interaction settled in under 5 seconds on Stellar.
 
-## SAP on Solana vs SAP on Stellar
+## Why Stellar
 
-| Aspect | Solana | Stellar |
-|--------|--------|---------|
-| Contracts | Anchor/BPF (Rust) | Soroban `#![no_std]` (Rust) |
-| Token | SOL (native lamports) | XLM via SAC / USDC via SAC |
-| Escrow | Lamport manipulation in PDA | Contract-held SAC balance |
-| Payments | Custom x402-escrow program | @x402/stellar + OZ facilitator |
-| Settlement | ~400ms | ~5s |
-| Fees | ~$0.001 | ~$0.00001 |
-| Auth | Signer accounts | `require_auth()` + custom accounts |
-| Size limit | ~10MB BPF | 64KB Wasm |
-| Ed25519 | Via runtime | Native |
+- **Sub-cent fees** (~$0.00001/tx) — micropayments where the fee doesn't exceed the payment
+- **~5s finality** — fast enough for synchronous HTTP request/response cycles
+- **Native stablecoins** — USDC via Stellar Asset Contract (SAC), no wrapping
+- **Ed25519 native** — matches our air-gapped signing infrastructure
+- **Soroban** — programmable spending policies and contract-held token balances
 
 ## Tech Stack
 

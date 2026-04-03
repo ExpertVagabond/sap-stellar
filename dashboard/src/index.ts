@@ -131,7 +131,7 @@ function renderDashboard(data: {
 </head>
 <body>
   <h1>SAP on Stellar</h1>
-  <p class="sub">Solana Agent Protocol — ported to Stellar/Soroban for the <a href="https://dorahacks.io/hackathon/stellar-agents-x402-stripe-mpp/detail">Stellar Hacks</a> hackathon</p>
+  <p class="sub">Agent coordination protocol on Stellar/Soroban — <a href="https://dorahacks.io/hackathon/stellar-agents-x402-stripe-mpp/detail">Stellar Hacks</a></p>
 
   <div class="stats">
     <div class="stat"><div class="label">Registered Agents</div><div class="value">${data.agentCount}</div></div>

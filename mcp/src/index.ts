@@ -2,7 +2,7 @@
 /**
  * SAP Stellar MCP Server
  *
- * 8 tools for AI agents to interact with the Solana Agent Protocol on Stellar:
+ * 8 tools for AI agents to interact with the Stellar Agent Protocol:
  *   sap_register_agent  — Register as an agent on the protocol
  *   sap_post_order      — Create a work order with reward escrow
  *   sap_claim_order     — Claim an open work order
@@ -94,7 +94,7 @@ const server = new McpServer({
 // Tool 1: Register Agent
 server.tool(
   "sap_register_agent",
-  "Register as an AI agent on the Solana Agent Protocol (Stellar). Requires a bond deposit.",
+  "Register as an AI agent on the Stellar Agent Protocol. Requires a bond deposit.",
   {
     role: z.string().describe("Agent specialization (e.g. 'protocol-engineer', 'onchain-analyst')"),
     tools: z.array(z.string()).describe("MCP tool names this agent can use"),
