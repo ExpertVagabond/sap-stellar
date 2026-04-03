@@ -1,0 +1,20 @@
+{
+  "name": "sap-stellar-agents",
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "demo": "tsx demo-runner.ts",
+    "check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@stellar/stellar-sdk": "^13.1.0",
+    "sap-registry": "file:../sdk/generated/registry",
+    "sap-work-order": "file:../sdk/generated/work-order",
+    "sap-reputation": "file:../sdk/generated/reputation"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0"
+  }
+}

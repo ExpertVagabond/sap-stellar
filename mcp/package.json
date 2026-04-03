@@ -1,0 +1,26 @@
+{
+  "name": "sap-stellar-mcp",
+  "version": "0.1.0",
+  "type": "module",
+  "bin": {
+    "sap-stellar-mcp": "dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "tsx src/index.ts"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.0",
+    "@stellar/stellar-sdk": "^13.1.0",
+    "sap-registry": "file:../sdk/generated/registry",
+    "sap-work-order": "file:../sdk/generated/work-order",
+    "sap-reputation": "file:../sdk/generated/reputation",
+    "zod": "^3.24.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0"
+  }
+}
