@@ -241,8 +241,8 @@ async function main() {
 
   console.log("\n=== Demo Complete ===");
   console.log("\nVerify on Stellar Expert:");
-  console.log(`  Registry: https://testnet.stellar.expert/explorer/testnet/contract/${REGISTRY}`);
-  console.log(`  Orders:   https://testnet.stellar.expert/explorer/testnet/contract/${WORK_ORDER}`);
+  console.log(`  Registry: https://stellar.expert/explorer/testnet/contract/${REGISTRY}`);
+  console.log(`  Orders:   https://stellar.expert/explorer/testnet/contract/${WORK_ORDER}`);
 }
 
 main().catch((err) => {

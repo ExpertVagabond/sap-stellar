@@ -4,7 +4,7 @@
 
 Built for the [Stellar Hacks: Agents](https://dorahacks.io/hackathon/stellar-agents-x402-stripe-mpp/detail) hackathon.
 
-**[Live Dashboard](https://sap-stellar-dashboard.purplesquirrelnetworks.workers.dev)** · **[Stellar Expert](https://testnet.stellar.expert/explorer/testnet/contract/CDJ3GGEJFAP27RCE4MXDL336Q5Q3KBPWYJXDAJYNOUI3FMYKHZNU7DNF)**
+**[Live Dashboard](https://sap-stellar-dashboard.purplesquirrelnetworks.workers.dev)** · **[Stellar Expert](https://stellar.expert/explorer/testnet/contract/CDJ3GGEJFAP27RCE4MXDL336Q5Q3KBPWYJXDAJYNOUI3FMYKHZNU7DNF)**
 
 ---
 
@@ -56,9 +56,9 @@ sap-stellar/
 
 | Contract | Address | Explorer |
 |----------|---------|----------|
-| Agent Registry | `CDJ3GGE...7DNF` | [View](https://testnet.stellar.expert/explorer/testnet/contract/CDJ3GGEJFAP27RCE4MXDL336Q5Q3KBPWYJXDAJYNOUI3FMYKHZNU7DNF) |
-| Work Order | `CDRSD3B...WDVH` | [View](https://testnet.stellar.expert/explorer/testnet/contract/CDRSD3BE3UNI4YGXQ6ND4UZ3KO2WT4H52AZHR6MHLP53JJ2Q3CTKWDVH) |
-| Reputation | `CBDHI2B...NLFY` | [View](https://testnet.stellar.expert/explorer/testnet/contract/CBDHI2BZ36WA7ROUXYONZXMARTUMXYAHEPXPE7HKJMST6XBTKOHPNLFY) |
+| Agent Registry | `CDJ3GGE...7DNF` | [View](https://stellar.expert/explorer/testnet/contract/CDJ3GGEJFAP27RCE4MXDL336Q5Q3KBPWYJXDAJYNOUI3FMYKHZNU7DNF) |
+| Work Order | `CDRSD3B...WDVH` | [View](https://stellar.expert/explorer/testnet/contract/CDRSD3BE3UNI4YGXQ6ND4UZ3KO2WT4H52AZHR6MHLP53JJ2Q3CTKWDVH) |
+| Reputation | `CBDHI2B...NLFY` | [View](https://stellar.expert/explorer/testnet/contract/CBDHI2BZ36WA7ROUXYONZXMARTUMXYAHEPXPE7HKJMST6XBTKOHPNLFY) |
 
 ### Key Design Decisions
 
